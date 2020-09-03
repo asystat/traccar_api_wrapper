@@ -3,7 +3,7 @@ const axios = require('axios');
 
 var instance = axios.create({
     baseURL: prvt.baseURL,
-    timeout: 1000,
+    timeout: 4000,
     auth: prvt.api_auth
   });
 
