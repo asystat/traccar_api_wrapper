@@ -21,6 +21,10 @@ var cli = function () {
             var device = answer.substr(11);
             console.log('fetching device '+device);
             get_device(device);
+        } else if (answer.startsWith('command ')){
+            
+            console.log('sending command to ');
+            
         } 
         cli(); //Calling this function again to ask new question
     });
