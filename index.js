@@ -1,56 +1,51 @@
-const api = require('./api_client.js');
+const api = require('./api_client.js').api;
 const readline = require('readline');
+const arg = require('arg');
 
 var rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
+
+/* CLI command parsing */
+const arg_config = {
+	// Types
+    '--command':  Boolean,    
+    '--device':   Number,
+};
+
+
 var cli = function () {
     rl.question('traccar_api_wrapper $ ', async function (answer) {
-        if (answer === 'exit'){ //we need some base case, for recursion
+
+        var argv = answer.split(" ");
+        var args = arg(arg_config,{argv});
+
+
+        if (args._.includes('exit')){ //we need some base case, for recursion
             return rl.close(); //closing RL and returning from function.
-        } else if (answer === 'help'){
-            console.log('Commands:\nget devices\n');
-        } else if (answer === 'get'){
-            console.log('get what?\n');
-        } else if (answer === 'get devices'){
-            console.log('fetching devices (async)');
-            get_devices();
-        } else if (answer.startsWith('get device ')){
-            var device = answer.substr(11);
-            console.log('fetching device '+device);
-            get_device(device);
-        } else if (answer.startsWith('command ')){
-            
-            console.log('sending command to ');
-            
+        } else if (args._.includes('help')){ //API help
+            console.log('Commands:\nget devices\nget --device <device_id>\nget commands\nsend --command <command_id> --device <device_id>\n');
+        } else if (args._.includes('get')){ // All get commands
+
+            if (args._.includes('devices')){
+                console.log('fetching devices (async)');
+                api.get_devices();
+            } else if (args._.includes('commands')){
+                console.log('fetching commands (async)');
+                // api.get_devices();
+            } else if ('--device' in args){
+                console.log('fetching device '+args['--device']);
+                api.get_device(args['--device']);
+            } else {
+                console.log('get what?\n');
+            }
         } 
         cli(); //Calling this function again to ask new question
     });
 };
 
 cli();
-
-
-var get_devices = function(){
-    const res = api.client.get('/devices').then(function (response) {
-        console.log(response);
-    }).catch(function (error) {
-        console.log(error);
-    }).then(function () {
-        // always executed
-    });
-}
-
-var get_device = function(id){
-    const res = api.client.get('/devices?id='+id).then(function (response) {
-        console.log(response);
-    }).catch(function (error) {
-        console.log(error);
-    }).then(function () {
-        // always executed
-    });
-}
 
 
