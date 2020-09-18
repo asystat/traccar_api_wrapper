@@ -34,7 +34,7 @@ var cli = function () {
                 api.get_devices();
             } else if (args._.includes('commands')){
                 console.log('fetching commands (async)');
-                // api.get_devices();
+                api.get_commands();
             } else if ('--device' in args){
                 console.log('fetching device '+args['--device']);
                 api.get_device(args['--device']);
